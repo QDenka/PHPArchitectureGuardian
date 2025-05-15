@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * Example configuration file for PHPArchitectureGuardian
+ * Copy this to .architecture-guardian.php in your project root
+ */
+
+return [
+    'analyzers' => [
+        // Domain-Driven Design architecture
+        'ddd' => [
+            'enabled' => true,
+            'config' => [
+                'domain_namespaces' => ['Domain', 'App\\Domain'],
+                'application_namespaces' => ['Application', 'App\\Application'],
+                'infrastructure_namespaces' => ['Infrastructure', 'App\\Infrastructure'],
+            ],
+        ],
+
+        // Clean Architecture
+        'clean' => [
+            'enabled' => false,
+            'config' => [
+                'entity_namespaces' => ['Entity', 'App\\Domain\\Entity', 'App\\Domain\\Model'],
+                'use_case_namespaces' => ['UseCase', 'App\\Application', 'App\\Domain\\UseCase'],
+                'controller_namespaces' => ['Controller', 'App\\Interfaces', 'App\\Presentation', 'App\\UI'],
+                'framework_namespaces' => ['Framework', 'App\\Infrastructure', 'App\\External', 'App\\Persistence'],
+            ],
+        ],
+
+        // Hexagonal Architecture (Ports & Adapters)
+        'hexagonal' => [
+            'enabled' => false,
+            'config' => [
+                'domain_namespaces' => ['App\\Domain', 'App\\Core', 'App\\Application'],
+                'port_namespaces' => ['App\\Domain\\Port', 'App\\Application\\Port', 'App\\Domain\\Contract'],
+                'adapter_namespaces' => ['App\\Infrastructure', 'App\\Adapter', 'App\\UI', 'App\\Persistence'],
+                'adapters_should_implement_ports' => true,
+            ],
+        ],
+
+        // Custom rules
+        'custom' => [
+            'enabled' => true,
+            'config' => [
+                // Naming conventions
+                'naming_rules' => [
+                    'App\\Domain\\Entity' => [
+                        [
+                            'pattern' => '/^[A-Z][a-zA-Z0-9]*$/',
+                            'description' => 'Entity class names should be PascalCase without suffixes',
+                        ],
+                    ],
+                    'App\\Domain\\ValueObject' => [
+                        [
+                            'pattern' => '/^[A-Z][a-zA-Z0-9]*$/',
+                            'description' => 'Value Object class names should be PascalCase without suffixes',
+                        ],
+                    ],
+                    'App\\Application\\Service' => [
+                        [
+                            'pattern' => '/^[A-Z][a-zA-Z0-9]*Service$/',
+                            'description' => 'Application service class names should be PascalCase with Service suffix',
+                        ],
+                    ],
+                    'App\\Infrastructure\\Repository' => [
+                        [
+                            'pattern' => '/^[A-Z][a-zA-Z0-9]*Repository$/',
+                            'description' => 'Repository class names should be PascalCase with Repository suffix',
+                        ],
+                    ],
+                ],
+
+                // Custom namespace dependency rules
+                'dependency_rules' => [
+                    'App\\Domain' => [
+                        'App\\Domain',
+                        // Domain can only depend on itself
+                    ],
+                    'App\\Application' => [
+                        'App\\Domain',
+                        'App\\Application',
+                        // Application can depend on Domain and itself
+                    ],
+                    'App\\Infrastructure' => [
+                        'App\\Domain',
+                        'App\\Application',
+                        'App\\Infrastructure',
+                        // Infrastructure can depend on Domain, Application, and itself
+                    ],
+                    'App\\UI' => [
+                        'App\\Domain',
+                        'App\\Application',
+                        'App\\UI',
+                        // UI can depend on Domain, Application, and itself, but not on Infrastructure
+                    ],
+                ],
+
+                // Global allowed dependencies (standard PHP classes, etc.)
+                'global_allowed_dependencies' => [
+                    'DateTimeInterface',
+                    'DateTime',
+                    'DateTimeImmutable',
+                    'Exception',
+                    'stdClass',
+                    'ArrayObject',
+                    'JsonSerializable',
+                    'Stringable',
+                ],
+            ],
+        ],
+    ],
+
+    // Directories to exclude from analysis
+    'exclude_patterns' => [
+        '/vendor/',
+        '/tests/',
+        '/var/',
+        '/cache/',
+        '/public/',
+    ],
+
+    // Report configuration
+    'report' => [
+        'format' => 'console',
+        'min_severity' => 3, // Only show warnings, errors, and critical issues
+        'output' => null, // Output to console, not to file
+    ],
+];
