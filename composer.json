@@ -1,0 +1,46 @@
+{
+  "name": "qdenka/php-architecture-guardian",
+  "description": "A tool for enforcing architectural principles in PHP projects",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Denis",
+      "email": "denis@kaban.dev"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "symfony/console": "^5.4|^6.0",
+    "symfony/finder": "^5.4|^6.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "phpstan/phpstan": "^1.9",
+    "friendsofphp/php-cs-fixer": "^3.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "PHPArchitectureGuardian\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PHPArchitectureGuardian\\Tests\\": "tests/"
+    }
+  },
+  "bin": [
+    "bin/php-architecture-guardian"
+  ],
+  "scripts": {
+    "test": "phpunit",
+    "phpstan": "phpstan analyse src --level=7",
+    "cs-fix": "php-cs-fixer fix src --rules=@PSR12",
+    "check-all": [
+      "@test",
+      "@phpstan",
+      "@cs-fix"
+    ]
+  },
+  "minimum-stability": "stable"
+}
