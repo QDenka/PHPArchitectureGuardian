@@ -37,42 +37,27 @@ class DependencyChecker
         // Extract use statements
         $pattern = '/use\s+([^;]+);/';
         preg_match_all($pattern, $content, $matches);
-
-        if (isset($matches[1])) {
-            $dependencies = array_merge($dependencies, $matches[1]);
-        }
+        $dependencies = array_merge($dependencies, $matches[1]);
 
         // Extract type hints in function parameters
         $typeHintPattern = '/function\s+\w+\s*\(.*?(\\\\\w+(?:\\\\\w+)*)\s+\$\w+.*?\)/s';
         preg_match_all($typeHintPattern, $content, $typeHintMatches);
-
-        if (isset($typeHintMatches[1])) {
-            $dependencies = array_merge($dependencies, $typeHintMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $typeHintMatches[1]);
 
         // Extract return type hints
         $returnTypePattern = '/function\s+\w+\s*\(.*?\)\s*:\s*(\\\\\w+(?:\\\\\w+)*)/s';
         preg_match_all($returnTypePattern, $content, $returnTypeMatches);
-
-        if (isset($returnTypeMatches[1])) {
-            $dependencies = array_merge($dependencies, $returnTypeMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $returnTypeMatches[1]);
 
         // Extract constructor property promotion type hints (PHP 8.0+)
         $constructorTypePattern = '/function\s+__construct\s*\(.*?(\\\\\w+(?:\\\\\w+)*)\s+\$\w+.*?\)/s';
         preg_match_all($constructorTypePattern, $content, $constructorTypeMatches);
-
-        if (isset($constructorTypeMatches[1])) {
-            $dependencies = array_merge($dependencies, $constructorTypeMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $constructorTypeMatches[1]);
 
         // Extract property type declarations (PHP 7.4+)
         $propertyTypePattern = '/(?:private|protected|public)\s+(\\\\\w+(?:\\\\\w+)*)\s+\$\w+/';
         preg_match_all($propertyTypePattern, $content, $propertyTypeMatches);
-
-        if (isset($propertyTypeMatches[1])) {
-            $dependencies = array_merge($dependencies, $propertyTypeMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $propertyTypeMatches[1]);
 
         // Remove duplicates and clean up
         $dependencies = array_unique(array_map('trim', $dependencies));

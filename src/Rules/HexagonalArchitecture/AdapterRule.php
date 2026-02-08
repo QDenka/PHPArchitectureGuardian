@@ -33,6 +33,11 @@ class AdapterRule extends AbstractRule
 
         // Get the content of the file
         $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return null;
+        }
+
         $className = $this->namespaceExtractor->extractClassNameFromContent($content);
 
         // Adapters should implement a port/interface from the domain
@@ -89,7 +94,7 @@ class AdapterRule extends AbstractRule
                 $usePattern = '/use\s+([^;]+);/';
                 preg_match_all($usePattern, $content, $useMatches);
 
-                foreach ($useMatches[1] ?? [] as $use) {
+                foreach ($useMatches[1] as $use) {
                     // Check if use statement imports this interface
                     if (substr($use, strrpos($use, '\\') + 1) === $interface) {
                         return $this->isPortNamespace($use);

@@ -33,6 +33,11 @@ class InfrastructureLayerRule extends AbstractRule
 
         // Check if this infrastructure component implements an interface from the domain
         $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return null;
+        }
+
         $className = $this->namespaceExtractor->extractClassNameFromContent($content);
 
         // Check for implements keyword in class definition
@@ -42,7 +47,7 @@ class InfrastructureLayerRule extends AbstractRule
             $interfaces = array_map('trim', explode(',', $implementsList));
 
             // Check if at least one interface is from the domain
-            $domainInterfaces = array_filter($interfaces, function ($interface) use ($namespace) {
+            $domainInterfaces = array_filter($interfaces, function ($interface) use ($content) {
                 // Check for fully qualified names in the implements list
                 if (strpos($interface, '\\') !== false) {
                     return $this->isDomainNamespace($interface);
@@ -52,7 +57,7 @@ class InfrastructureLayerRule extends AbstractRule
                 $usePattern = '/use\s+([^;]+);/';
                 preg_match_all($usePattern, $content, $useMatches);
 
-                foreach ($useMatches[1] ?? [] as $use) {
+                foreach ($useMatches[1] as $use) {
                     // Check if use statement imports this interface
                     if (substr($use, strrpos($use, '\\') + 1) === $interface) {
                         return $this->isDomainNamespace($use);
