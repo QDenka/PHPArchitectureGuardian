@@ -5,4 +5,3 @@ parameters:
     excludePaths:
         - vendor
     reportUnmatchedIgnoredErrors: false
-    checkMissingIterableValueType: false
