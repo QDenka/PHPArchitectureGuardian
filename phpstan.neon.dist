@@ -1,0 +1,8 @@
+parameters:
+    level: 7
+    paths:
+        - src
+    excludePaths:
+        - vendor
+    reportUnmatchedIgnoredErrors: false
+    checkMissingIterableValueType: false

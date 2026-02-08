@@ -1,1 +1,11 @@
 /vendor/
+/.phpunit.cache/
+/.php-cs-fixer.cache
+composer.lock
+.architecture-guardian.php
+.phpunit.result.cache
+*.swp
+*.swo
+.idea/
+.vscode/
+.DS_Store

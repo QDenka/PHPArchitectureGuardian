@@ -1,0 +1,75 @@
+#!/usr/bin/env php
+<?php
+
+// Find autoloader
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+    getcwd() . '/vendor/autoload.php',
+];
+
+$autoloader = null;
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        $autoloader = $path;
+        break;
+    }
+}
+
+if ($autoloader === null) {
+    echo "Error: Could not find Composer autoloader. Did you run 'composer install'?\n";
+    exit(1);
+}
+
+require $autoloader;
+
+use PHPArchitectureGuardian\ArchitectureGuardian;
+
+// Parse command line arguments
+$options = getopt('c:p:f:h', ['config:', 'path:', 'format:', 'help']);
+
+if (isset($options['h']) || isset($options['help'])) {
+    echo <<<HELP
+PHPArchitectureGuardian - A tool for enforcing architectural principles in PHP projects
+
+Usage:
+  php-architecture-guardian [options]
+
+Options:
+  -c, --config    Path to configuration file (default: .architecture-guardian.php in current directory or parents)
+  -p, --path      Path to analyze (default: current directory)
+  -f, --format    Output format: console, json, junit (default: console)
+  -h, --help      Display this help message
+
+Examples:
+  php-architecture-guardian
+  php-architecture-guardian --path=src
+  php-architecture-guardian --config=architecture-guardian.php --path=src
+  php-architecture-guardian --format=json
+  php-architecture-guardian --format=junit --path=src
+
+HELP;
+    exit(0);
+}
+
+// Get options
+$configFile = $options['c'] ?? $options['config'] ?? null;
+$path = $options['p'] ?? $options['path'] ?? getcwd();
+$format = $options['f'] ?? $options['format'] ?? 'console';
+
+// Create reporter based on format
+$reporterClass = match ($format) {
+    'json' => \PHPArchitectureGuardian\Report\JsonReporter::class,
+    'junit' => \PHPArchitectureGuardian\Report\JUnitReporter::class,
+    default => \PHPArchitectureGuardian\Report\ConsoleReporter::class,
+};
+
+try {
+    $reporter = new $reporterClass();
+    $guardian = new ArchitectureGuardian($configFile, $reporter);
+    $exitCode = $guardian->run($path);
+    exit($exitCode);
+} catch (\Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    exit(1);
+}
