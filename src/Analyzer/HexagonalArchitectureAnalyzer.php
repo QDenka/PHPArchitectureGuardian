@@ -2,10 +2,9 @@
 
 namespace PHPArchitectureGuardian\Analyzer;
 
-use PHPArchitectureGuardian\Core\ViolationCollection;
+use PHPArchitectureGuardian\Rules\HexagonalArchitecture\AdapterRule;
 use PHPArchitectureGuardian\Rules\HexagonalArchitecture\DomainRule;
 use PHPArchitectureGuardian\Rules\HexagonalArchitecture\PortRule;
-use PHPArchitectureGuardian\Rules\HexagonalArchitecture\AdapterRule;
 
 /**
  * Analyzer for Hexagonal Architecture (Ports & Adapters)

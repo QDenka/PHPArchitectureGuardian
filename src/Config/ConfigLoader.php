@@ -25,13 +25,13 @@ class ConfigLoader
             return $this->getDefaultConfig();
         }
 
-        if (!file_exists($configFile)) {
+        if (! file_exists($configFile)) {
             throw new \RuntimeException("Configuration file not found: {$configFile}");
         }
 
         $config = require $configFile;
 
-        if (!is_array($config)) {
+        if (! is_array($config)) {
             throw new \RuntimeException("Configuration file must return an array: {$configFile}");
         }
 

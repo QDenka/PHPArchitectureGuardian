@@ -3,14 +3,14 @@
 namespace PHPArchitectureGuardian;
 
 use PHPArchitectureGuardian\Analyzer\ArchitectureAnalyzer;
-use PHPArchitectureGuardian\Analyzer\DDDAnalyzer;
 use PHPArchitectureGuardian\Analyzer\CleanArchitectureAnalyzer;
-use PHPArchitectureGuardian\Analyzer\HexagonalArchitectureAnalyzer;
 use PHPArchitectureGuardian\Analyzer\CustomAnalyzer;
+use PHPArchitectureGuardian\Analyzer\DDDAnalyzer;
+use PHPArchitectureGuardian\Analyzer\HexagonalArchitectureAnalyzer;
 use PHPArchitectureGuardian\Config\ConfigLoader;
 use PHPArchitectureGuardian\Core\ViolationCollection;
-use PHPArchitectureGuardian\Report\ReporterInterface;
 use PHPArchitectureGuardian\Report\ConsoleReporter;
+use PHPArchitectureGuardian\Report\ReporterInterface;
 
 /**
  * Main class for the PHPArchitectureGuardian tool
@@ -52,8 +52,9 @@ class ArchitectureGuardian
     {
         $path = $path ?? getcwd();
 
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             echo "Error: Path {$path} is not a directory.\n";
+
             return 1;
         }
 

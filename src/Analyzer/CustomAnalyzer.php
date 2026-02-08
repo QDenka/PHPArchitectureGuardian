@@ -32,13 +32,13 @@ class CustomAnalyzer extends ArchitectureAnalyzer
      */
     public function addCustomRule(string $ruleClassName, array $ruleConfig = []): void
     {
-        if (!class_exists($ruleClassName)) {
+        if (! class_exists($ruleClassName)) {
             throw new \RuntimeException("Rule class {$ruleClassName} does not exist.");
         }
 
         $rule = new $ruleClassName();
 
-        if (!($rule instanceof \PHPArchitectureGuardian\Core\RuleInterface)) {
+        if (! ($rule instanceof \PHPArchitectureGuardian\Core\RuleInterface)) {
             throw new \RuntimeException("Class {$ruleClassName} is not a valid rule.");
         }
 

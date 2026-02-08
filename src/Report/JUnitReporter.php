@@ -58,7 +58,7 @@ class JUnitReporter implements ReporterInterface
             );
 
             $details = $violation->getDetails();
-            if (!empty($details)) {
+            if (! empty($details)) {
                 $detailText .= "\nDetails: " . json_encode($details, JSON_UNESCAPED_SLASHES);
             }
 

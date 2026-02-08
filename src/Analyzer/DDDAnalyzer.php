@@ -3,8 +3,8 @@
 namespace PHPArchitectureGuardian\Analyzer;
 
 use PHPArchitectureGuardian\Core\ViolationCollection;
-use PHPArchitectureGuardian\Rules\DDD\DomainLayerRule;
 use PHPArchitectureGuardian\Rules\DDD\ApplicationLayerRule;
+use PHPArchitectureGuardian\Rules\DDD\DomainLayerRule;
 use PHPArchitectureGuardian\Rules\DDD\InfrastructureLayerRule;
 
 /**
@@ -19,7 +19,7 @@ class DDDAnalyzer extends ArchitectureAnalyzer
     public function __construct()
     {
         parent::__construct();
-        
+
         $this->addRule(new DomainLayerRule());
         $this->addRule(new ApplicationLayerRule());
         $this->addRule(new InfrastructureLayerRule());

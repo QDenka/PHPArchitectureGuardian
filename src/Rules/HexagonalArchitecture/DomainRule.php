@@ -27,7 +27,7 @@ class DomainRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is a domain namespace
-        if (!$this->isDomainNamespace($namespace)) {
+        if (! $this->isDomainNamespace($namespace)) {
             return null; // Not a domain class, no violation
         }
 
@@ -36,7 +36,7 @@ class DomainRule extends AbstractRule
 
         // In Hexagonal Architecture, domain should not depend on adapters or anything outside the domain
         $forbiddenDependencies = array_filter($dependencies, function ($dep) {
-            return $this->isAdapterNamespace($dep) || !$this->isDomainNamespace($dep);
+            return $this->isAdapterNamespace($dep) || ! $this->isDomainNamespace($dep);
         });
 
         // Exclude allowed external dependencies (usually standard libraries)
@@ -45,7 +45,7 @@ class DomainRule extends AbstractRule
             'DateTime',
             'DateTimeImmutable',
             'Exception',
-            'stdClass'
+            'stdClass',
         ];
 
         $forbiddenDependencies = array_filter($forbiddenDependencies, function ($dep) use ($allowedExternalDeps) {
@@ -54,10 +54,11 @@ class DomainRule extends AbstractRule
                     return false;
                 }
             }
+
             return true;
         });
 
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Domain should not depend on adapters or external code. Found dependencies: %s",
                 implode(', ', $forbiddenDependencies)
@@ -88,8 +89,9 @@ class DomainRule extends AbstractRule
         $domainNamespaces = $this->config['domain_namespaces'] ?? [
             'Domain',
             'Core',
-            'Application'
+            'Application',
         ];
+
         return $this->namespaceMatches($namespace, $domainNamespaces);
     }
 
@@ -106,8 +108,9 @@ class DomainRule extends AbstractRule
             'Adapter',
             'Framework',
             'UI',
-            'Persistence'
+            'Persistence',
         ];
+
         return $this->namespaceMatches($namespace, $adapterNamespaces);
     }
 }

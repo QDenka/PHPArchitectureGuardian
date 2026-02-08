@@ -27,7 +27,7 @@ class EntityRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is an entity namespace
-        if (!$this->isEntityNamespace($namespace)) {
+        if (! $this->isEntityNamespace($namespace)) {
             return null; // Not an entity class, no violation
         }
 
@@ -41,7 +41,7 @@ class EntityRule extends AbstractRule
                 $this->isFrameworkNamespace($dep);
         });
 
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Entity layer should not depend on any other layer (use cases, controllers, frameworks). Found dependencies: %s",
                 implode(', ', $forbiddenDependencies)
@@ -73,8 +73,9 @@ class EntityRule extends AbstractRule
             'Entity',
             'Domain\\Entity',
             'Domain\\Model',
-            'Core\\Entity'
+            'Core\\Entity',
         ];
+
         return $this->namespaceMatches($namespace, $entityNamespaces);
     }
 
@@ -90,8 +91,9 @@ class EntityRule extends AbstractRule
             'UseCase',
             'Application',
             'Domain\\UseCase',
-            'Core\\UseCase'
+            'Core\\UseCase',
         ];
+
         return $this->namespaceMatches($namespace, $useCaseNamespaces);
     }
 
@@ -107,8 +109,9 @@ class EntityRule extends AbstractRule
             'Controller',
             'Interfaces',
             'Presentation',
-            'UI'
+            'UI',
         ];
+
         return $this->namespaceMatches($namespace, $controllerNamespaces);
     }
 
@@ -124,8 +127,9 @@ class EntityRule extends AbstractRule
             'Framework',
             'Infrastructure',
             'External',
-            'Persistence'
+            'Persistence',
         ];
+
         return $this->namespaceMatches($namespace, $frameworkNamespaces);
     }
 }

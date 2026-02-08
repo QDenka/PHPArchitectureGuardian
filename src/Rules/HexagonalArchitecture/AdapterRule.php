@@ -27,7 +27,7 @@ class AdapterRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is an adapter namespace
-        if (!$this->isAdapterNamespace($namespace)) {
+        if (! $this->isAdapterNamespace($namespace)) {
             return null; // Not an adapter, no violation
         }
 
@@ -41,7 +41,7 @@ class AdapterRule extends AbstractRule
         // Configurable: should adapters always implement ports?
         $shouldImplementPort = $this->config['adapters_should_implement_ports'] ?? true;
 
-        if ($shouldImplementPort && !$implementsPort) {
+        if ($shouldImplementPort && ! $implementsPort) {
             $message = sprintf(
                 "Adapter '%s' should implement a port/interface from the domain",
                 $className
@@ -99,7 +99,7 @@ class AdapterRule extends AbstractRule
                 return false;
             });
 
-            return !empty($portInterfaces);
+            return ! empty($portInterfaces);
         }
 
         return false;
@@ -118,8 +118,9 @@ class AdapterRule extends AbstractRule
             'Adapter',
             'Framework',
             'UI',
-            'Persistence'
+            'Persistence',
         ];
+
         return $this->namespaceMatches($namespace, $adapterNamespaces);
     }
 
@@ -135,8 +136,9 @@ class AdapterRule extends AbstractRule
             'Port',
             'Domain\\Port',
             'Application\\Port',
-            'Domain\\Contract'
+            'Domain\\Contract',
         ];
+
         return $this->namespaceMatches($namespace, $portNamespaces);
     }
 }

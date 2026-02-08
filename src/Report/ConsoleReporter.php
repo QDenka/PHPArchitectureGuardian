@@ -51,8 +51,8 @@ class ConsoleReporter implements ReporterInterface
 
             // Add details if available
             $details = $violation->getDetails();
-            if (!empty($details)) {
-                if (isset($details['forbidden_dependencies']) && !empty($details['forbidden_dependencies'])) {
+            if (! empty($details)) {
+                if (isset($details['forbidden_dependencies']) && ! empty($details['forbidden_dependencies'])) {
                     $result .= "   Forbidden dependencies:\n";
                     foreach ($details['forbidden_dependencies'] as $dep) {
                         $result .= sprintf("     - %s\n", $dep);
@@ -137,7 +137,7 @@ class ConsoleReporter implements ReporterInterface
 
         $label = $labels[$severity] ?? 'UNKNOWN';
 
-        if (!$this->useColors) {
+        if (! $this->useColors) {
             return $label;
         }
 

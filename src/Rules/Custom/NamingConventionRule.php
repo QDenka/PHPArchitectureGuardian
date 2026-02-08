@@ -44,7 +44,7 @@ class NamingConventionRule extends AbstractRule
             $pattern = $rule['pattern'];
             $description = $rule['description'] ?? 'Must match pattern: ' . $pattern;
 
-            if (!preg_match($pattern, $className)) {
+            if (! preg_match($pattern, $className)) {
                 $message = sprintf(
                     "Class '%s' in namespace '%s' does not follow naming convention: %s",
                     $className,

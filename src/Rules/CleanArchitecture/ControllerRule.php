@@ -27,7 +27,7 @@ class ControllerRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is a controller namespace
-        if (!$this->isControllerNamespace($namespace)) {
+        if (! $this->isControllerNamespace($namespace)) {
             return null; // Not a controller class, no violation
         }
 
@@ -42,6 +42,7 @@ class ControllerRule extends AbstractRule
         foreach ($dependencies as $dependency) {
             if ($this->isUseCaseNamespace($dependency)) {
                 $hasUseCaseDependency = true;
+
                 break;
             }
         }
@@ -56,7 +57,7 @@ class ControllerRule extends AbstractRule
 
         // Should depend on use cases (configurable)
         $shouldDependOnUseCases = $this->config['should_depend_on_use_cases'] ?? true;
-        if ($shouldDependOnUseCases && !$hasUseCaseDependency) {
+        if ($shouldDependOnUseCases && ! $hasUseCaseDependency) {
             $message = sprintf(
                 "Controller should depend on use cases rather than directly on entities"
             );
@@ -72,7 +73,7 @@ class ControllerRule extends AbstractRule
         }
 
         // Should not depend on framework
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Controller should not depend on framework/infrastructure layer. Found dependencies: %s",
                 implode(', ', $forbiddenDependencies)
@@ -89,7 +90,7 @@ class ControllerRule extends AbstractRule
             );
         }
 
-        return !empty($violations) ? $violations[0] : null;
+        return ! empty($violations) ? $violations[0] : null;
     }
 
     /**
@@ -104,8 +105,9 @@ class ControllerRule extends AbstractRule
             'Controller',
             'Interfaces',
             'Presentation',
-            'UI'
+            'UI',
         ];
+
         return $this->namespaceMatches($namespace, $controllerNamespaces);
     }
 
@@ -121,8 +123,9 @@ class ControllerRule extends AbstractRule
             'UseCase',
             'Application',
             'Domain\\UseCase',
-            'Core\\UseCase'
+            'Core\\UseCase',
         ];
+
         return $this->namespaceMatches($namespace, $useCaseNamespaces);
     }
 
@@ -138,8 +141,9 @@ class ControllerRule extends AbstractRule
             'Framework',
             'Infrastructure',
             'External',
-            'Persistence'
+            'Persistence',
         ];
+
         return $this->namespaceMatches($namespace, $frameworkNamespaces);
     }
 }

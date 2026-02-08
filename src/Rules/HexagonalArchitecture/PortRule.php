@@ -27,7 +27,7 @@ class PortRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is a port namespace
-        if (!$this->isPortNamespace($namespace)) {
+        if (! $this->isPortNamespace($namespace)) {
             return null; // Not a port, no violation
         }
 
@@ -35,7 +35,7 @@ class PortRule extends AbstractRule
         $content = file_get_contents($filePath);
 
         // Ports should be interfaces in Hexagonal Architecture
-        if (!$this->isInterface($content)) {
+        if (! $this->isInterface($content)) {
             $message = "Ports in Hexagonal Architecture should be interfaces";
 
             return $this->createViolation(
@@ -56,7 +56,7 @@ class PortRule extends AbstractRule
             return $this->isAdapterNamespace($dep);
         });
 
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Ports should not depend on adapters. Found dependencies: %s",
                 implode(', ', $forbiddenDependencies)
@@ -99,8 +99,9 @@ class PortRule extends AbstractRule
             'Port',
             'Domain\\Port',
             'Application\\Port',
-            'Domain\\Contract'
+            'Domain\\Contract',
         ];
+
         return $this->namespaceMatches($namespace, $portNamespaces);
     }
 
@@ -117,8 +118,9 @@ class PortRule extends AbstractRule
             'Adapter',
             'Framework',
             'UI',
-            'Persistence'
+            'Persistence',
         ];
+
         return $this->namespaceMatches($namespace, $adapterNamespaces);
     }
 }

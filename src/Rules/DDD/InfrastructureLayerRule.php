@@ -27,7 +27,7 @@ class InfrastructureLayerRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is an infrastructure namespace
-        if (!$this->isInfrastructureNamespace($namespace)) {
+        if (! $this->isInfrastructureNamespace($namespace)) {
             return null; // Not an infrastructure class, no violation
         }
 
@@ -95,6 +95,7 @@ class InfrastructureLayerRule extends AbstractRule
     private function isInfrastructureNamespace(string $namespace): bool
     {
         $infrastructureNamespaces = $this->config['infrastructure_namespaces'] ?? ['Infrastructure', 'Infra'];
+
         return $this->namespaceMatches($namespace, $infrastructureNamespaces);
     }
 
@@ -107,6 +108,7 @@ class InfrastructureLayerRule extends AbstractRule
     private function isDomainNamespace(string $namespace): bool
     {
         $domainNamespaces = $this->config['domain_namespaces'] ?? ['Domain', 'Model'];
+
         return $this->namespaceMatches($namespace, $domainNamespaces);
     }
 }
