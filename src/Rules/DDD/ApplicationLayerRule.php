@@ -73,7 +73,7 @@ class ApplicationLayerRule extends AbstractRule
      */
     private function isApplicationNamespace(string $namespace): bool
     {
-        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application', 'App', 'UseCase'];
+        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application', 'UseCase'];
 
         return $this->namespaceMatches($namespace, $applicationNamespaces);
     }

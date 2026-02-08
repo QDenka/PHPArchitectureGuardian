@@ -76,9 +76,15 @@ abstract class AbstractRule implements RuleInterface
     }
 
     /**
-     * Check if namespace matches any of the patterns using prefix matching.
-     * A pattern matches if the namespace equals the pattern exactly,
-     * or starts with the pattern followed by a backslash.
+     * Check if namespace matches any of the patterns using segment matching.
+     * A pattern matches if it appears as a complete namespace segment anywhere
+     * in the namespace path. This supports both root-level patterns (e.g. "Domain")
+     * and vendor-prefixed patterns (e.g. "App\Domain").
+     *
+     * Examples:
+     *   - Pattern "Domain" matches: "Domain", "Domain\Entity", "App\Domain\Entity", "App\Domain"
+     *   - Pattern "Domain" does NOT match: "SomeDomain", "DomainService", "MyDomain\Entity"
+     *   - Pattern "Domain\Port" matches: "Domain\Port", "App\Domain\Port\UserPort"
      *
      * @param string $namespace
      * @param array<int, string> $patterns
@@ -87,7 +93,12 @@ abstract class AbstractRule implements RuleInterface
     protected function namespaceMatches(string $namespace, array $patterns): bool
     {
         foreach ($patterns as $pattern) {
-            if ($namespace === $pattern || str_starts_with($namespace, $pattern . '\\')) {
+            if (
+                $namespace === $pattern
+                || str_starts_with($namespace, $pattern . '\\')
+                || str_contains($namespace, '\\' . $pattern . '\\')
+                || str_ends_with($namespace, '\\' . $pattern)
+            ) {
                 return true;
             }
         }

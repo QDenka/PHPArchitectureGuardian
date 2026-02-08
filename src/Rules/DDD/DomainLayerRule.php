@@ -80,7 +80,7 @@ class DomainLayerRule extends AbstractRule
      */
     private function isApplicationNamespace(string $namespace): bool
     {
-        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application', 'App'];
+        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application'];
 
         return $this->namespaceMatches($namespace, $applicationNamespaces);
     }
