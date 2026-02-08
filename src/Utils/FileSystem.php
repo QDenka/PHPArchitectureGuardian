@@ -13,12 +13,12 @@ class FileSystem
      * Find all PHP files in the given directory
      *
      * @param string $path Directory to scan
-     * @return array Array of PHP file paths
+     * @return array<int, string> Array of PHP file paths
      */
     public function findPhpFiles(string $path): array
     {
         $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)
+            new \RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
         );
 
         $files = [];
@@ -40,7 +40,13 @@ class FileSystem
      */
     public function readFile(string $filePath): string
     {
-        return file_get_contents($filePath);
+        $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return '';
+        }
+
+        return $content;
     }
 
     /**

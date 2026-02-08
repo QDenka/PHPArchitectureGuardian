@@ -43,7 +43,7 @@ class ConsoleReporter implements ReporterInterface
                 "\n%d) %s in %s\n",
                 $index + 1,
                 $severityLabel,
-                $this->formatFilePath($violation->getFilePath())
+                $this->formatFilePath($violation->getFilePath()),
             );
 
             $result .= sprintf("   Rule: %s\n", $violation->getRuleName());
@@ -51,8 +51,8 @@ class ConsoleReporter implements ReporterInterface
 
             // Add details if available
             $details = $violation->getDetails();
-            if (!empty($details)) {
-                if (isset($details['forbidden_dependencies']) && !empty($details['forbidden_dependencies'])) {
+            if (! empty($details)) {
+                if (isset($details['forbidden_dependencies']) && ! empty($details['forbidden_dependencies'])) {
                     $result .= "   Forbidden dependencies:\n";
                     foreach ($details['forbidden_dependencies'] as $dep) {
                         $result .= sprintf("     - %s\n", $dep);
@@ -105,36 +105,6 @@ class ConsoleReporter implements ReporterInterface
     }
 
     /**
-     * Format warning message
-     *
-     * @param string $message
-     * @return string
-     */
-    private function warning(string $message): string
-    {
-        if ($this->useColors) {
-            return "\033[33m" . $message . "\033[0m";
-        }
-
-        return $message;
-    }
-
-    /**
-     * Format info message
-     *
-     * @param string $message
-     * @return string
-     */
-    private function info(string $message): string
-    {
-        if ($this->useColors) {
-            return "\033[34m" . $message . "\033[0m";
-        }
-
-        return $message;
-    }
-
-    /**
      * Format file path
      *
      * @param string $filePath
@@ -167,7 +137,7 @@ class ConsoleReporter implements ReporterInterface
 
         $label = $labels[$severity] ?? 'UNKNOWN';
 
-        if (!$this->useColors) {
+        if (! $this->useColors) {
             return $label;
         }
 

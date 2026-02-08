@@ -27,7 +27,7 @@ class DomainLayerRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is a domain namespace
-        if (!$this->isDomainNamespace($namespace)) {
+        if (! $this->isDomainNamespace($namespace)) {
             return null; // Not a domain class, no violation
         }
 
@@ -39,7 +39,7 @@ class DomainLayerRule extends AbstractRule
             return $this->isApplicationNamespace($dep) || $this->isInfrastructureNamespace($dep);
         });
 
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Domain layer should not depend on application or infrastructure layers. Found dependencies: %s",
                 implode(', ', $forbiddenDependencies)
@@ -68,6 +68,7 @@ class DomainLayerRule extends AbstractRule
     private function isDomainNamespace(string $namespace): bool
     {
         $domainNamespaces = $this->config['domain_namespaces'] ?? ['Domain', 'Model'];
+
         return $this->namespaceMatches($namespace, $domainNamespaces);
     }
 
@@ -79,7 +80,8 @@ class DomainLayerRule extends AbstractRule
      */
     private function isApplicationNamespace(string $namespace): bool
     {
-        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application', 'App'];
+        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application'];
+
         return $this->namespaceMatches($namespace, $applicationNamespaces);
     }
 
@@ -92,6 +94,7 @@ class DomainLayerRule extends AbstractRule
     private function isInfrastructureNamespace(string $namespace): bool
     {
         $infrastructureNamespaces = $this->config['infrastructure_namespaces'] ?? ['Infrastructure', 'Infra'];
+
         return $this->namespaceMatches($namespace, $infrastructureNamespaces);
     }
 }

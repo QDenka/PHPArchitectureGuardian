@@ -11,11 +11,16 @@ class DependencyChecker
      * Extract dependencies from a file
      *
      * @param string $filePath
-     * @return array
+     * @return array<int, string>
      */
     public function extractDependencies(string $filePath): array
     {
         $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return [];
+        }
+
         return $this->extractDependenciesFromContent($content);
     }
 
@@ -23,7 +28,7 @@ class DependencyChecker
      * Extract dependencies from content
      *
      * @param string $content
-     * @return array
+     * @return array<int, string>
      */
     public function extractDependenciesFromContent(string $content): array
     {
@@ -32,47 +37,32 @@ class DependencyChecker
         // Extract use statements
         $pattern = '/use\s+([^;]+);/';
         preg_match_all($pattern, $content, $matches);
-
-        if (isset($matches[1])) {
-            $dependencies = array_merge($dependencies, $matches[1]);
-        }
+        $dependencies = array_merge($dependencies, $matches[1]);
 
         // Extract type hints in function parameters
         $typeHintPattern = '/function\s+\w+\s*\(.*?(\\\\\w+(?:\\\\\w+)*)\s+\$\w+.*?\)/s';
         preg_match_all($typeHintPattern, $content, $typeHintMatches);
-
-        if (isset($typeHintMatches[1])) {
-            $dependencies = array_merge($dependencies, $typeHintMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $typeHintMatches[1]);
 
         // Extract return type hints
         $returnTypePattern = '/function\s+\w+\s*\(.*?\)\s*:\s*(\\\\\w+(?:\\\\\w+)*)/s';
         preg_match_all($returnTypePattern, $content, $returnTypeMatches);
-
-        if (isset($returnTypeMatches[1])) {
-            $dependencies = array_merge($dependencies, $returnTypeMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $returnTypeMatches[1]);
 
         // Extract constructor property promotion type hints (PHP 8.0+)
         $constructorTypePattern = '/function\s+__construct\s*\(.*?(\\\\\w+(?:\\\\\w+)*)\s+\$\w+.*?\)/s';
         preg_match_all($constructorTypePattern, $content, $constructorTypeMatches);
-
-        if (isset($constructorTypeMatches[1])) {
-            $dependencies = array_merge($dependencies, $constructorTypeMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $constructorTypeMatches[1]);
 
         // Extract property type declarations (PHP 7.4+)
         $propertyTypePattern = '/(?:private|protected|public)\s+(\\\\\w+(?:\\\\\w+)*)\s+\$\w+/';
         preg_match_all($propertyTypePattern, $content, $propertyTypeMatches);
-
-        if (isset($propertyTypeMatches[1])) {
-            $dependencies = array_merge($dependencies, $propertyTypeMatches[1]);
-        }
+        $dependencies = array_merge($dependencies, $propertyTypeMatches[1]);
 
         // Remove duplicates and clean up
         $dependencies = array_unique(array_map('trim', $dependencies));
 
-        return $dependencies;
+        return array_values($dependencies);
     }
 
     /**
@@ -87,7 +77,7 @@ class DependencyChecker
         $dependencies = $this->extractDependencies($sourceFilePath);
 
         foreach ($dependencies as $dependency) {
-            if ($dependency === $targetNamespace || strpos($dependency, $targetNamespace . '\\') === 0) {
+            if ($dependency === $targetNamespace || str_starts_with($dependency, $targetNamespace . '\\')) {
                 return true;
             }
         }
@@ -99,8 +89,8 @@ class DependencyChecker
      * Check if a class violates dependency rule (depends on something it shouldn't)
      *
      * @param string $sourceFilePath
-     * @param array $forbiddenNamespaces
-     * @return array
+     * @param array<int, string> $forbiddenNamespaces
+     * @return array<int, string>
      */
     public function findForbiddenDependencies(string $sourceFilePath, array $forbiddenNamespaces): array
     {
@@ -109,8 +99,9 @@ class DependencyChecker
 
         foreach ($dependencies as $dependency) {
             foreach ($forbiddenNamespaces as $forbidden) {
-                if ($dependency === $forbidden || strpos($dependency, $forbidden . '\\') === 0) {
+                if ($dependency === $forbidden || str_starts_with($dependency, $forbidden . '\\')) {
                     $violations[] = $dependency;
+
                     break;
                 }
             }

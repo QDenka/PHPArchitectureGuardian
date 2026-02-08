@@ -27,7 +27,7 @@ class ApplicationLayerRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is an application namespace
-        if (!$this->isApplicationNamespace($namespace)) {
+        if (! $this->isApplicationNamespace($namespace)) {
             return null; // Not an application class, no violation
         }
 
@@ -37,14 +37,14 @@ class ApplicationLayerRule extends AbstractRule
         // Check if app layer can use infrastructure directly
         $canUseInfrastructure = $this->config['can_use_infrastructure'] ?? false;
 
-        if (!$canUseInfrastructure) {
+        if (! $canUseInfrastructure) {
             // In DDD, application typically should not depend directly on infrastructure
             // but should depend on interfaces (ports) defined in the domain
             $forbiddenDependencies = array_filter($dependencies, function ($dep) {
                 return $this->isInfrastructureNamespace($dep);
             });
 
-            if (!empty($forbiddenDependencies)) {
+            if (! empty($forbiddenDependencies)) {
                 $message = sprintf(
                     "Application layer should not depend directly on infrastructure layer but use interfaces. Found dependencies: %s",
                     implode(', ', $forbiddenDependencies)
@@ -73,7 +73,8 @@ class ApplicationLayerRule extends AbstractRule
      */
     private function isApplicationNamespace(string $namespace): bool
     {
-        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application', 'App', 'UseCase'];
+        $applicationNamespaces = $this->config['application_namespaces'] ?? ['Application', 'UseCase'];
+
         return $this->namespaceMatches($namespace, $applicationNamespaces);
     }
 
@@ -86,6 +87,7 @@ class ApplicationLayerRule extends AbstractRule
     private function isInfrastructureNamespace(string $namespace): bool
     {
         $infrastructureNamespaces = $this->config['infrastructure_namespaces'] ?? ['Infrastructure', 'Infra'];
+
         return $this->namespaceMatches($namespace, $infrastructureNamespaces);
     }
 }

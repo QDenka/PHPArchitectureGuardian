@@ -27,7 +27,7 @@ class UseCaseRule extends AbstractRule
         $namespace = $this->namespaceExtractor->extractFromFile($filePath);
 
         // Check if this is a use case namespace
-        if (!$this->isUseCaseNamespace($namespace)) {
+        if (! $this->isUseCaseNamespace($namespace)) {
             return null; // Not a use case class, no violation
         }
 
@@ -39,7 +39,7 @@ class UseCaseRule extends AbstractRule
             return $this->isControllerNamespace($dep) || $this->isFrameworkNamespace($dep);
         });
 
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Use Case layer should not depend on outer layers (controllers, frameworks). Found dependencies: %s",
                 implode(', ', $forbiddenDependencies)
@@ -71,8 +71,9 @@ class UseCaseRule extends AbstractRule
             'UseCase',
             'Application',
             'Domain\\UseCase',
-            'Core\\UseCase'
+            'Core\\UseCase',
         ];
+
         return $this->namespaceMatches($namespace, $useCaseNamespaces);
     }
 
@@ -88,8 +89,9 @@ class UseCaseRule extends AbstractRule
             'Controller',
             'Interfaces',
             'Presentation',
-            'UI'
+            'UI',
         ];
+
         return $this->namespaceMatches($namespace, $controllerNamespaces);
     }
 
@@ -105,8 +107,9 @@ class UseCaseRule extends AbstractRule
             'Framework',
             'Infrastructure',
             'External',
-            'Persistence'
+            'Persistence',
         ];
+
         return $this->namespaceMatches($namespace, $frameworkNamespaces);
     }
 }

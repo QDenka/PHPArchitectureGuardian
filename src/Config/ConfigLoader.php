@@ -3,126 +3,108 @@
 namespace PHPArchitectureGuardian\Config;
 
 /**
- * Configuration loader for PHPArchitectureGuardian
+ * Loads configuration for ArchitectureGuardian
  */
 class ConfigLoader
 {
-    /**
-     * Default config file name
-     */
-    private const string DEFAULT_CONFIG_FILE = '.architecture-guardian.php';
+    /** @var string */
+    private const DEFAULT_CONFIG_FILE = '.architecture-guardian.php';
 
     /**
      * Load configuration from file
      *
      * @param string|null $configFile
-     * @return array
-     * @throws \Exception If config file is not found or not valid
+     * @return array<string, mixed>
+     * @throws \Exception
      */
     public function load(?string $configFile = null): array
     {
-        $configFile = $configFile ?? $this->findDefaultConfigFile();
+        $configFile = $configFile ?? $this->findConfigFile();
 
-        if (!file_exists($configFile)) {
-            throw new \RuntimeException("Config file not found: {$configFile}");
+        if ($configFile === null) {
+            return $this->getDefaultConfig();
+        }
+
+        if (! file_exists($configFile)) {
+            throw new \RuntimeException("Configuration file not found: {$configFile}");
         }
 
         $config = require $configFile;
 
-        if (!is_array($config)) {
-            throw new \RuntimeException("Invalid config file. Expected array, got " . gettype($config));
+        if (! is_array($config)) {
+            throw new \RuntimeException("Configuration file must return an array: {$configFile}");
         }
 
-        return $this->mergeWithDefaults($config);
+        return array_merge($this->getDefaultConfig(), $config);
     }
 
     /**
-     * Find default config file in current directory or parents
+     * Find configuration file in current directory or parent directories
      *
-     * @return string
-     * @throws \Exception If default config file is not found
+     * @return string|null
      */
-    private function findDefaultConfigFile(): string
+    private function findConfigFile(): ?string
     {
         $directory = getcwd();
 
-        while ($directory !== '/' && $directory !== '') {
+        if ($directory === false) {
+            return null;
+        }
+
+        while (true) {
             $configFile = $directory . DIRECTORY_SEPARATOR . self::DEFAULT_CONFIG_FILE;
 
             if (file_exists($configFile)) {
                 return $configFile;
             }
 
-            $directory = dirname($directory);
+            $parentDirectory = dirname($directory);
+
+            if ($parentDirectory === $directory) {
+                break;
+            }
+
+            $directory = $parentDirectory;
         }
 
-        throw new \RuntimeException("Default config file not found in current directory or parents.");
+        return null;
     }
 
     /**
-     * Merge user config with default config
+     * Get default configuration
      *
-     * @param array $config
-     * @return array
+     * @return array<string, mixed>
      */
-    private function mergeWithDefaults(array $config): array
+    private function getDefaultConfig(): array
     {
-        $defaults = [
+        return [
             'analyzers' => [
                 'ddd' => [
                     'enabled' => false,
-                    'config' => [
-                        'domain_namespaces' => ['Domain', 'Model'],
-                        'application_namespaces' => ['Application', 'App'],
-                        'infrastructure_namespaces' => ['Infrastructure', 'Infra'],
-                    ],
+                    'config' => [],
                 ],
                 'clean' => [
                     'enabled' => false,
-                    'config' => [
-                        'entity_namespaces' => ['Entity', 'Domain\\Entity', 'Domain\\Model'],
-                        'use_case_namespaces' => ['UseCase', 'Application', 'Domain\\UseCase'],
-                        'controller_namespaces' => ['Controller', 'Interfaces', 'Presentation', 'UI'],
-                        'framework_namespaces' => ['Framework', 'Infrastructure', 'External', 'Persistence'],
-                    ],
+                    'config' => [],
                 ],
                 'hexagonal' => [
                     'enabled' => false,
-                    'config' => [
-                        'domain_namespaces' => ['Domain', 'Core', 'Application'],
-                        'port_namespaces' => ['Port', 'Domain\\Port', 'Application\\Port', 'Domain\\Contract'],
-                        'adapter_namespaces' => ['Infrastructure', 'Adapter', 'Framework', 'UI', 'Persistence'],
-                        'adapters_should_implement_ports' => true,
-                    ],
+                    'config' => [],
                 ],
                 'custom' => [
                     'enabled' => false,
-                    'config' => [
-                        'naming_rules' => [],
-                        'dependency_rules' => [],
-                        'global_allowed_dependencies' => [
-                            'DateTimeInterface',
-                            'DateTime',
-                            'DateTimeImmutable',
-                            'Exception',
-                            'stdClass'
-                        ],
-                    ],
+                    'config' => [],
                 ],
             ],
             'exclude_patterns' => [
                 '/vendor/',
                 '/tests/',
-                '/var/',
-                '/cache/',
             ],
             'report' => [
                 'format' => 'console',
-                'min_severity' => 3,
+                'min_severity' => 1,
                 'output' => null,
             ],
         ];
-
-        return array_replace_recursive($defaults, $config);
     }
 }

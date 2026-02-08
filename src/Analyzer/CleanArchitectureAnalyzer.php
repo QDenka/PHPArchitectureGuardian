@@ -2,10 +2,9 @@
 
 namespace PHPArchitectureGuardian\Analyzer;
 
-use PHPArchitectureGuardian\Core\ViolationCollection;
+use PHPArchitectureGuardian\Rules\CleanArchitecture\ControllerRule;
 use PHPArchitectureGuardian\Rules\CleanArchitecture\EntityRule;
 use PHPArchitectureGuardian\Rules\CleanArchitecture\UseCaseRule;
-use PHPArchitectureGuardian\Rules\CleanArchitecture\ControllerRule;
 
 /**
  * Analyzer for Clean Architecture

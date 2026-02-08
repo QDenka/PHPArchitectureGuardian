@@ -47,6 +47,7 @@ class NamespaceDependencyRule extends AbstractRule
             foreach ($allowedDeps as $allowed) {
                 if ($dependency === $allowed || strpos($dependency, $allowed . '\\') === 0) {
                     $isAllowed = true;
+
                     break;
                 }
             }
@@ -57,22 +58,23 @@ class NamespaceDependencyRule extends AbstractRule
                 'DateTime',
                 'DateTimeImmutable',
                 'Exception',
-                'stdClass'
+                'stdClass',
             ];
 
             foreach ($globalAllowed as $allowed) {
                 if ($dependency === $allowed || str_ends_with($dependency, '\\' . $allowed)) {
                     $isAllowed = true;
+
                     break;
                 }
             }
 
-            if (!$isAllowed) {
+            if (! $isAllowed) {
                 $forbiddenDependencies[] = $dependency;
             }
         }
 
-        if (!empty($forbiddenDependencies)) {
+        if (! empty($forbiddenDependencies)) {
             $message = sprintf(
                 "Namespace '%s' has forbidden dependencies: %s",
                 $namespace,

@@ -27,7 +27,7 @@ class Violation
         string $message,
         string $ruleName,
         int $severity = 3,
-        array $details = []
+        array $details = [],
     ) {
         $this->filePath = $filePath;
         $this->message = $message;
@@ -94,6 +94,7 @@ class Violation
     public function toString(): string
     {
         $severityStr = str_repeat('*', $this->severity);
+
         return sprintf("[%s] %s: %s in %s", $severityStr, $this->ruleName, $this->message, $this->filePath);
     }
 }
