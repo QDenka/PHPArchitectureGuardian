@@ -11,11 +11,16 @@ class DependencyChecker
      * Extract dependencies from a file
      *
      * @param string $filePath
-     * @return array
+     * @return array<int, string>
      */
     public function extractDependencies(string $filePath): array
     {
         $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return [];
+        }
+
         return $this->extractDependenciesFromContent($content);
     }
 
@@ -23,7 +28,7 @@ class DependencyChecker
      * Extract dependencies from content
      *
      * @param string $content
-     * @return array
+     * @return array<int, string>
      */
     public function extractDependenciesFromContent(string $content): array
     {
@@ -72,7 +77,7 @@ class DependencyChecker
         // Remove duplicates and clean up
         $dependencies = array_unique(array_map('trim', $dependencies));
 
-        return $dependencies;
+        return array_values($dependencies);
     }
 
     /**
@@ -87,7 +92,7 @@ class DependencyChecker
         $dependencies = $this->extractDependencies($sourceFilePath);
 
         foreach ($dependencies as $dependency) {
-            if ($dependency === $targetNamespace || strpos($dependency, $targetNamespace . '\\') === 0) {
+            if ($dependency === $targetNamespace || str_starts_with($dependency, $targetNamespace . '\\')) {
                 return true;
             }
         }
@@ -99,8 +104,8 @@ class DependencyChecker
      * Check if a class violates dependency rule (depends on something it shouldn't)
      *
      * @param string $sourceFilePath
-     * @param array $forbiddenNamespaces
-     * @return array
+     * @param array<int, string> $forbiddenNamespaces
+     * @return array<int, string>
      */
     public function findForbiddenDependencies(string $sourceFilePath, array $forbiddenNamespaces): array
     {
@@ -109,8 +114,9 @@ class DependencyChecker
 
         foreach ($dependencies as $dependency) {
             foreach ($forbiddenNamespaces as $forbidden) {
-                if ($dependency === $forbidden || strpos($dependency, $forbidden . '\\') === 0) {
+                if ($dependency === $forbidden || str_starts_with($dependency, $forbidden . '\\')) {
                     $violations[] = $dependency;
+
                     break;
                 }
             }

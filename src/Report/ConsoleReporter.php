@@ -43,7 +43,7 @@ class ConsoleReporter implements ReporterInterface
                 "\n%d) %s in %s\n",
                 $index + 1,
                 $severityLabel,
-                $this->formatFilePath($violation->getFilePath())
+                $this->formatFilePath($violation->getFilePath()),
             );
 
             $result .= sprintf("   Rule: %s\n", $violation->getRuleName());
@@ -99,36 +99,6 @@ class ConsoleReporter implements ReporterInterface
     {
         if ($this->useColors) {
             return "\033[31m" . $message . "\033[0m";
-        }
-
-        return $message;
-    }
-
-    /**
-     * Format warning message
-     *
-     * @param string $message
-     * @return string
-     */
-    private function warning(string $message): string
-    {
-        if ($this->useColors) {
-            return "\033[33m" . $message . "\033[0m";
-        }
-
-        return $message;
-    }
-
-    /**
-     * Format info message
-     *
-     * @param string $message
-     * @return string
-     */
-    private function info(string $message): string
-    {
-        if ($this->useColors) {
-            return "\033[34m" . $message . "\033[0m";
         }
 
         return $message;

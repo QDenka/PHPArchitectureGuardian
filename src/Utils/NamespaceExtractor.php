@@ -16,6 +16,11 @@ class NamespaceExtractor
     public function extractFromFile(string $filePath): string
     {
         $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return '';
+        }
+
         return $this->extractFromContent($content);
     }
 
@@ -45,11 +50,17 @@ class NamespaceExtractor
     public function extractClassNameFromFile(string $filePath): string
     {
         $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            return '';
+        }
+
         return $this->extractClassNameFromContent($content);
     }
 
     /**
-     * Extract classname from content
+     * Extract classname from content.
+     * Only matches actual class/interface/trait declarations, not mentions in comments.
      *
      * @param string $content
      * @return string
@@ -57,9 +68,9 @@ class NamespaceExtractor
     public function extractClassNameFromContent(string $content): string
     {
         $patterns = [
-            '/class\s+([a-zA-Z0-9_]+)/',
-            '/interface\s+([a-zA-Z0-9_]+)/',
-            '/trait\s+([a-zA-Z0-9_]+)/'
+            '/^\s*(?:abstract\s+|final\s+|readonly\s+)*class\s+([a-zA-Z0-9_]+)/m',
+            '/^\s*(?:readonly\s+)?interface\s+([a-zA-Z0-9_]+)/m',
+            '/^\s*trait\s+([a-zA-Z0-9_]+)/m',
         ];
 
         foreach ($patterns as $pattern) {

@@ -3,12 +3,12 @@
 namespace PHPArchitectureGuardian\Tests\Analyzer;
 
 use PHPArchitectureGuardian\Analyzer\DDDAnalyzer;
-use PHPArchitectureGuardian\Rules\DDD\DomainLayerRule;
 use PHPArchitectureGuardian\Rules\DDD\ApplicationLayerRule;
+use PHPArchitectureGuardian\Rules\DDD\DomainLayerRule;
 use PHPArchitectureGuardian\Rules\DDD\InfrastructureLayerRule;
 use PHPArchitectureGuardian\Utils\FileSystem;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class DDDAnalyzerTest extends TestCase
 {
@@ -55,7 +55,7 @@ class DDDAnalyzerTest extends TestCase
         $rulesProperty->setValue($this->analyzer, [
             $this->domainRule,
             $this->applicationRule,
-            $this->infrastructureRule
+            $this->infrastructureRule,
         ]);
     }
 
@@ -81,13 +81,10 @@ class DDDAnalyzerTest extends TestCase
         $config = [
             'domain_namespaces' => ['Business', 'Core'],
             'application_namespaces' => ['Service', 'App'],
-            'infrastructure_namespaces' => ['External', 'Adapter']
+            'infrastructure_namespaces' => ['External', 'Adapter'],
         ];
 
-        // Configure the analyzer
-        $this->analyzer->configure($config);
-
-        // Expect each rule to be configured
+        // Set expectations BEFORE calling configure
         $this->domainRule->expects($this->once())
             ->method('configure')
             ->with($this->equalTo($config));
@@ -100,7 +97,10 @@ class DDDAnalyzerTest extends TestCase
             ->method('configure')
             ->with($this->equalTo($config));
 
-        // Run the analyzer (nothing will happen since all is mocked)
+        // Configure the analyzer (triggers rule configure calls)
+        $this->analyzer->configure($config);
+
+        // Run the analyzer
         $this->fileSystem->method('findPhpFiles')
             ->willReturn([]);
 
@@ -113,7 +113,7 @@ class DDDAnalyzerTest extends TestCase
         $testFiles = [
             '/path/to/src/Domain/Entity.php',
             '/path/to/src/Application/Service.php',
-            '/path/to/src/Infrastructure/Repository.php'
+            '/path/to/src/Infrastructure/Repository.php',
         ];
 
         $this->fileSystem->method('findPhpFiles')

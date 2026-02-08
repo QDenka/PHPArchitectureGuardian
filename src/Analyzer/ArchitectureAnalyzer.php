@@ -4,7 +4,6 @@ namespace PHPArchitectureGuardian\Analyzer;
 
 use PHPArchitectureGuardian\Core\AnalyzerInterface;
 use PHPArchitectureGuardian\Core\RuleInterface;
-use PHPArchitectureGuardian\Core\Violation;
 use PHPArchitectureGuardian\Core\ViolationCollection;
 use PHPArchitectureGuardian\Utils\FileSystem;
 
@@ -16,7 +15,7 @@ abstract class ArchitectureAnalyzer implements AnalyzerInterface
     /** @var RuleInterface[] */
     protected array $rules = [];
 
-    /** @var array */
+    /** @var array<string, mixed> */
     protected array $config = [];
 
     /** @var FileSystem */
@@ -59,6 +58,8 @@ abstract class ArchitectureAnalyzer implements AnalyzerInterface
     }
 
     /**
+     * Configure analyzer and pass full configuration to each rule.
+     *
      * @inheritDoc
      */
     public function configure(array $config): void
@@ -66,8 +67,7 @@ abstract class ArchitectureAnalyzer implements AnalyzerInterface
         $this->config = $config;
 
         foreach ($this->rules as $rule) {
-            $ruleConfig = $config[$rule->getName()] ?? [];
-            $rule->configure($ruleConfig);
+            $rule->configure($config);
         }
     }
 
